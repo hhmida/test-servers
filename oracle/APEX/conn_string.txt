@@ -1,0 +1,1 @@
+CONN_STRING=sys/Welcome1##@database:1521/XEPDB1

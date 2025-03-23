@@ -1,0 +1,1 @@
+docker run -it -d -p 3306:3306 -v `pwd`/script:/script --name mysql -e MYSQL_ROOT_PASSWORD=root mysql:8.0.27 && sleep 20 && docker exec mysql bash -c "mysql -u root --password=root </script/mysqlsampledatabase.sql"

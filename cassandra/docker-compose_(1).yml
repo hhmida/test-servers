@@ -1,0 +1,51 @@
+services:
+  cassandra-1:
+    image: cassandra:4.0.6
+    container_name: cassandra-1
+    hostname: cassandra-1
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCluster
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-1
+      - CASSANDRA_NUM_TOKENS=1
+      - CASSANDRA_PASSWORD_SEEDER=yes \
+      - CASSANDRA_PASSWORD=mypassword \
+    ports:
+      - "9042:9042"
+
+  cassandra-2:
+    image: cassandra:4.0.6
+    container_name: cassandra-2
+    hostname: cassandra-2
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCluster
+      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-2
+      - CASSANDRA_NUM_TOKENS=1
+      - CASSANDRA_PASSWORD=mypassword 
+      
+    depends_on:
+      - cassandra-1
+
+  cassandra-3:
+    image: cassandra:4.0.6
+    container_name: cassandra-3
+    hostname: cassandra-3
+    networks:
+      - cassandra-net
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCluster
+      - CASSANDRA_SEEDS=cassandra-1
+      - CASSANDRA_BROADCAST_ADDRESS=cassandra-3
+      - CASSANDRA_NUM_TOKENS=1
+      - CASSANDRA_PASSWORD=mypassword 
+    depends_on:
+      - cassandra-1
+      - cassandra-2
+
+networks:
+  cassandra-net:
+    driver: bridge
