@@ -25,7 +25,6 @@ Ajoutez les providers nécessaires :
 apache-airflow-providers-apache-kafka
 apache-airflow-providers-apache-spark
 apache-airflow-providers-apache-hdfs
-apache-airflow-providers-apache-hadoop
 ```
 Ajoutez d'autres selon vos besoins.
 
