@@ -1,0 +1,7 @@
+[2025-05-25T09:06:25.474+0000] {processor.py:186} INFO - Started process (PID=80) to work on /opt/airflow/dags/hmida.py
+[2025-05-25T09:06:25.474+0000] {processor.py:914} INFO - Processing file /opt/airflow/dags/hmida.py for tasks to queue
+[2025-05-25T09:06:25.476+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:25.476+0000] {dagbag.py:588} INFO - Filling up the DagBag from /opt/airflow/dags/hmida.py
+[2025-05-25T09:06:25.488+0000] {processor.py:925} INFO - DAG(s) 'uvt_example' retrieved from /opt/airflow/dags/hmida.py
+[2025-05-25T09:06:25.513+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:25.513+0000] {dag.py:3239} INFO - Sync 1 DAGs
+[2025-05-25T09:06:25.534+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:25.534+0000] {dag.py:4180} INFO - Setting next_dagrun for uvt_example to 2025-05-24 00:00:00+00:00, run_after=2025-05-25 00:00:00+00:00
+[2025-05-25T09:06:25.548+0000] {processor.py:208} INFO - Processing /opt/airflow/dags/hmida.py took 0.079 seconds

@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13
+    container_name: awx_postgres
+    environment:
+      POSTGRES_USER: awx
+      POSTGRES_PASSWORD: awxpass
+      POSTGRES_DB: awx
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    networks:
+      - awx_net
+
+  redis:
+    image: redis
+    container_name: awx_redis
+    networks:
+      - awx_net
+
+  awx:
+    image: imagine10255/awx
+    container_name: awx
+    ports:
+      - "8080:8052"
+    environment:
+      DATABASE_USER: awx
+      DATABASE_NAME: awx
+      DATABASE_PASSWORD: awxpass
+      DATABASE_HOST: postgres
+      REDIS_HOST: redis
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - awx_net
+
+volumes:
+  pg_data:
+
+networks:
+  awx_net:

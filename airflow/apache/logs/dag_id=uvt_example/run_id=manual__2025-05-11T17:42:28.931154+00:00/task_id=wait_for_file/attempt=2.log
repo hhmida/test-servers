@@ -1,0 +1,136 @@
+[2025-05-11T17:47:37.518+0000] {local_task_job_runner.py:123} INFO - ::group::Pre task execution logs
+[2025-05-11T17:47:37.549+0000] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: uvt_example.wait_for_file manual__2025-05-11T17:42:28.931154+00:00 [queued]>
+[2025-05-11T17:47:37.581+0000] {taskinstance.py:2614} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: uvt_example.wait_for_file manual__2025-05-11T17:42:28.931154+00:00 [queued]>
+[2025-05-11T17:47:37.582+0000] {taskinstance.py:2867} INFO - Starting attempt 2 of 2
+[2025-05-11T17:47:37.908+0000] {taskinstance.py:2890} INFO - Executing <Task(FileSensor): wait_for_file> on 2025-05-11 17:42:28.931154+00:00
+[2025-05-11T17:47:37.924+0000] {warnings.py:112} WARNING - /home/***/.local/lib/python3.12/site-packages/***/task/task_runner/standard_task_runner.py:70: DeprecationWarning: This process (pid=186) is multi-threaded, use of fork() may lead to deadlocks in the child.
+  pid = os.fork()
+
+[2025-05-11T17:47:37.926+0000] {standard_task_runner.py:72} INFO - Started process 188 to run task
+[2025-05-11T17:47:37.928+0000] {standard_task_runner.py:104} INFO - Running: ['***', 'tasks', 'run', 'uvt_example', 'wait_for_file', 'manual__2025-05-11T17:42:28.931154+00:00', '--job-id', '55', '--raw', '--subdir', 'DAGS_FOLDER/hmida.py', '--cfg-path', '/tmp/tmpwq_qvta0']
+[2025-05-11T17:47:37.930+0000] {standard_task_runner.py:105} INFO - Job 55: Subtask wait_for_file
+[2025-05-11T17:47:38.045+0000] {task_command.py:467} INFO - Running <TaskInstance: uvt_example.wait_for_file manual__2025-05-11T17:42:28.931154+00:00 [running]> on host 0cb3ccf66fff
+[2025-05-11T17:47:38.230+0000] {taskinstance.py:3134} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='uvt_example' AIRFLOW_CTX_TASK_ID='wait_for_file' AIRFLOW_CTX_EXECUTION_DATE='2025-05-11T17:42:28.931154+00:00' AIRFLOW_CTX_TRY_NUMBER='2' AIRFLOW_CTX_DAG_RUN_ID='manual__2025-05-11T17:42:28.931154+00:00'
+[2025-05-11T17:47:38.232+0000] {logging_mixin.py:190} INFO - Task instance is in running state
+[2025-05-11T17:47:38.232+0000] {logging_mixin.py:190} INFO -  Previous state of the Task instance: queued
+[2025-05-11T17:47:38.233+0000] {logging_mixin.py:190} INFO - Current task name:wait_for_file state:running start_date:2025-05-11 17:47:37.549521+00:00
+[2025-05-11T17:47:38.233+0000] {logging_mixin.py:190} INFO - Dag name:uvt_example and current dag run status:running
+[2025-05-11T17:47:38.234+0000] {taskinstance.py:732} INFO - ::endgroup::
+[2025-05-11T17:47:38.234+0000] {baseoperator.py:423} WARNING - FileSensor.execute cannot be called outside TaskInstance!
+[2025-05-11T17:47:38.277+0000] {base.py:84} INFO - Retrieving connection 'fs_default'
+[2025-05-11T17:47:38.277+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:47:48.278+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:47:58.279+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:48:08.280+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:48:18.281+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:48:28.282+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:48:38.283+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:48:48.283+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:48:58.284+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:49:08.285+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:49:18.286+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:49:28.286+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:49:38.287+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:49:48.288+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:49:58.289+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:50:08.289+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:50:18.290+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:50:28.291+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:50:38.292+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:50:48.293+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:50:58.293+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:51:08.294+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:51:18.296+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:51:28.296+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:51:38.297+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:51:48.298+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:51:58.299+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:52:08.299+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:52:18.300+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:52:28.301+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:52:38.302+0000] {filesystem.py:109} INFO - Poking for file /tmp/my_file.txt
+[2025-05-11T17:52:38.303+0000] {taskinstance.py:3313} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 768, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 734, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/sensors/filesystem.py", line 123, in execute
+    super().execute(context=context)
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/sensors/base.py", line 326, in execute
+    raise AirflowSensorTimeout(message)
+airflow.exceptions.AirflowSensorTimeout: Sensor has timed out; run duration of 300.06782937888056 seconds exceeds the specified timeout of 300.0.
+[2025-05-11T17:52:38.317+0000] {logging_mixin.py:190} INFO - Task instance in failure state
+[2025-05-11T17:52:38.318+0000] {logging_mixin.py:190} INFO - Task start:2025-05-11 17:47:37.549521+00:00 end:2025-05-11 17:52:38.316976+00:00 duration:300.767455
+[2025-05-11T17:52:38.318+0000] {logging_mixin.py:190} INFO - Task:<Task(FileSensor): wait_for_file> dag:<DAG: uvt_example> dagrun:<DagRun uvt_example @ 2025-05-11 17:42:28.931154+00:00: manual__2025-05-11T17:42:28.931154+00:00, state:running, queued_at: 2025-05-11 17:42:28.964331+00:00. externally triggered: True>
+[2025-05-11T17:52:38.319+0000] {logging_mixin.py:190} INFO - Failure caused by Sensor has timed out; run duration of 300.06782937888056 seconds exceeds the specified timeout of 300.0.
+[2025-05-11T17:52:38.319+0000] {taskinstance.py:1226} INFO - Immediate failure requested. Marking task as FAILED. dag_id=uvt_example, task_id=wait_for_file, run_id=manual__2025-05-11T17:42:28.931154+00:00, execution_date=20250511T174228, start_date=20250511T174737, end_date=20250511T175238
+[2025-05-11T17:52:38.363+0000] {taskinstance.py:341} INFO - ::group::Post task execution logs
+[2025-05-11T17:52:38.364+0000] {standard_task_runner.py:124} ERROR - Failed to execute job 55 for task wait_for_file (Sensor has timed out; run duration of 300.06782937888056 seconds exceeds the specified timeout of 300.0.; 188)
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/task/task_runner/standard_task_runner.py", line 117, in _start_by_fork
+    ret = args.func(args, dag=self.dag)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/cli/cli_config.py", line 49, in command
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/cli.py", line 116, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/cli/commands/task_command.py", line 483, in task_run
+    task_return_code = _run_task_by_selected_method(args, _dag, ti)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/cli/commands/task_command.py", line 256, in _run_task_by_selected_method
+    return _run_raw_task(args, ti)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/cli/commands/task_command.py", line 341, in _run_raw_task
+    return ti._run_raw_task(
+           ^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/session.py", line 97, in wrapper
+    return func(*args, session=session, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 3006, in _run_raw_task
+    return _run_raw_task(
+           ^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 274, in _run_raw_task
+    TaskInstance._execute_task_with_callbacks(
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 3161, in _execute_task_with_callbacks
+    result = self._execute_task(context, task_orig)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 3185, in _execute_task
+    return _execute_task(self, context, task_orig)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 768, in _execute_task
+    result = _execute_callable(context=context, **execute_callable_kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/taskinstance.py", line 734, in _execute_callable
+    return ExecutionCallableRunner(
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/utils/operator_helpers.py", line 252, in run
+    return self.func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/sensors/filesystem.py", line 123, in execute
+    super().execute(context=context)
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/models/baseoperator.py", line 424, in wrapper
+    return func(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/airflow/.local/lib/python3.12/site-packages/airflow/sensors/base.py", line 326, in execute
+    raise AirflowSensorTimeout(message)
+airflow.exceptions.AirflowSensorTimeout: Sensor has timed out; run duration of 300.06782937888056 seconds exceeds the specified timeout of 300.0.
+[2025-05-11T17:52:38.394+0000] {local_task_job_runner.py:266} INFO - Task exited with return code 1
+[2025-05-11T17:52:38.428+0000] {taskinstance.py:3901} INFO - 0 downstream tasks scheduled from follow-on schedule check
+[2025-05-11T17:52:38.432+0000] {local_task_job_runner.py:245} INFO - ::endgroup::

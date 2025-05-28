@@ -1,0 +1,7 @@
+[2025-05-25T09:06:25.463+0000] {processor.py:186} INFO - Started process (PID=79) to work on /opt/airflow/dags/new.py
+[2025-05-25T09:06:25.464+0000] {processor.py:914} INFO - Processing file /opt/airflow/dags/new.py for tasks to queue
+[2025-05-25T09:06:25.466+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:25.466+0000] {dagbag.py:588} INFO - Filling up the DagBag from /opt/airflow/dags/new.py
+[2025-05-25T09:06:25.481+0000] {processor.py:925} INFO - DAG(s) 'complex_processing_pipeline' retrieved from /opt/airflow/dags/new.py
+[2025-05-25T09:06:25.626+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:25.626+0000] {dag.py:3239} INFO - Sync 1 DAGs
+[2025-05-25T09:06:25.643+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:25.643+0000] {dag.py:4180} INFO - Setting next_dagrun for complex_processing_pipeline to 2025-05-24 00:00:00+00:00, run_after=2025-05-25 00:00:00+00:00
+[2025-05-25T09:06:25.659+0000] {processor.py:208} INFO - Processing /opt/airflow/dags/new.py took 0.201 seconds

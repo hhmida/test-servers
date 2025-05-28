@@ -1,0 +1,54 @@
+[2025-05-25T09:06:27.768+0000] {processor.py:186} INFO - Started process (PID=98) to work on /home/airflow/.local/lib/python3.12/site-packages/airflow/example_dags/example_inlet_event_extra.py
+[2025-05-25T09:06:27.769+0000] {processor.py:914} INFO - Processing file /home/airflow/.local/lib/python3.12/site-packages/airflow/example_dags/example_inlet_event_extra.py for tasks to queue
+[2025-05-25T09:06:27.771+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:27.771+0000] {dagbag.py:588} INFO - Filling up the DagBag from /home/airflow/.local/lib/python3.12/site-packages/airflow/example_dags/example_inlet_event_extra.py
+[2025-05-25T09:06:28.487+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:28.486+0000] {process_utils.py:266} INFO - Waiting up to 5 seconds for processes to exit...
+[2025-05-25T09:06:28.488+0000] {logging_mixin.py:190} WARNING - Exception ignored in: <module 'collections.abc' from '/usr/local/lib/python3.12/collections/abc.py'>
+[2025-05-25T09:06:28.488+0000] {logging_mixin.py:190} WARNING - Traceback (most recent call last):
+[2025-05-25T09:06:28.488+0000] {logging_mixin.py:190} WARNING -   File "<string>", line 0, in <module>
+[2025-05-25T09:06:28.489+0000] {logging_mixin.py:190} WARNING -   File "/home/airflow/.local/lib/python3.12/site-packages/airflow/dag_processing/manager.py", line 466, in _exit_gracefully
+[2025-05-25T09:06:28.489+0000] {logging_mixin.py:190} WARNING -     self.log.debug("Current Stacktrace is: %s", "\n".join(map(str, inspect.stack())))
+[2025-05-25T09:06:28.489+0000] {logging_mixin.py:190} WARNING -                                                                    ^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.490+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1781, in stack
+[2025-05-25T09:06:28.491+0000] {logging_mixin.py:190} WARNING -     return getouterframes(sys._getframe(1), context)
+[2025-05-25T09:06:28.491+0000] {logging_mixin.py:190} WARNING -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.491+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1756, in getouterframes
+[2025-05-25T09:06:28.492+0000] {logging_mixin.py:190} WARNING -     traceback_info = getframeinfo(frame, context)
+[2025-05-25T09:06:28.492+0000] {logging_mixin.py:190} WARNING -                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.493+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1718, in getframeinfo
+[2025-05-25T09:06:28.493+0000] {logging_mixin.py:190} WARNING -     lines, lnum = findsource(frame)
+[2025-05-25T09:06:28.494+0000] {logging_mixin.py:190} WARNING -                   ^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.494+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1090, in findsource
+[2025-05-25T09:06:28.495+0000] {logging_mixin.py:190} WARNING -     module = getmodule(object, file)
+[2025-05-25T09:06:28.495+0000] {logging_mixin.py:190} WARNING -              ^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.495+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1016, in getmodule
+[2025-05-25T09:06:28.496+0000] {logging_mixin.py:190} WARNING -     os.path.realpath(f)] = module.__name__
+[2025-05-25T09:06:28.496+0000] {logging_mixin.py:190} WARNING -     ^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.496+0000] {logging_mixin.py:190} WARNING -   File "<frozen posixpath>", line 427, in realpath
+[2025-05-25T09:06:28.497+0000] {logging_mixin.py:190} WARNING -   File "<frozen posixpath>", line 462, in _joinrealpath
+[2025-05-25T09:06:28.497+0000] {logging_mixin.py:190} WARNING -   File "/home/airflow/.local/lib/python3.12/site-packages/airflow/dag_processing/manager.py", line 466, in _exit_gracefully
+[2025-05-25T09:06:28.497+0000] {logging_mixin.py:190} WARNING -     self.log.debug("Current Stacktrace is: %s", "\n".join(map(str, inspect.stack())))
+[2025-05-25T09:06:28.498+0000] {logging_mixin.py:190} WARNING -                                                                    ^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.498+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1781, in stack
+[2025-05-25T09:06:28.498+0000] {logging_mixin.py:190} WARNING -     return getouterframes(sys._getframe(1), context)
+[2025-05-25T09:06:28.499+0000] {logging_mixin.py:190} WARNING -            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.499+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1756, in getouterframes
+[2025-05-25T09:06:28.499+0000] {logging_mixin.py:190} WARNING -     traceback_info = getframeinfo(frame, context)
+[2025-05-25T09:06:28.500+0000] {logging_mixin.py:190} WARNING -                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.500+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1714, in getframeinfo
+[2025-05-25T09:06:28.500+0000] {logging_mixin.py:190} WARNING -     filename = getsourcefile(frame) or getfile(frame)
+[2025-05-25T09:06:28.501+0000] {logging_mixin.py:190} WARNING -                ^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.501+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 970, in getsourcefile
+[2025-05-25T09:06:28.501+0000] {logging_mixin.py:190} WARNING -     module = getmodule(object, filename)
+[2025-05-25T09:06:28.502+0000] {logging_mixin.py:190} WARNING -              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.502+0000] {logging_mixin.py:190} WARNING -   File "/usr/local/lib/python3.12/inspect.py", line 1007, in getmodule
+[2025-05-25T09:06:28.502+0000] {logging_mixin.py:190} WARNING -     if ismodule(module) and hasattr(module, '__file__'):
+[2025-05-25T09:06:28.503+0000] {logging_mixin.py:190} WARNING -                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+[2025-05-25T09:06:28.503+0000] {logging_mixin.py:190} WARNING -   File "/home/airflow/.local/lib/python3.12/site-packages/airflow/dag_processing/manager.py", line 470, in _exit_gracefully
+[2025-05-25T09:06:28.503+0000] {logging_mixin.py:190} WARNING -     sys.exit(os.EX_OK)
+[2025-05-25T09:06:28.503+0000] {logging_mixin.py:190} WARNING - SystemExit: 0
+[2025-05-25T09:06:28.864+0000] {logging_mixin.py:190} WARNING - <frozen importlib._bootstrap>:488 RuntimeWarning: Cython module failed to patch module with custom type
+[2025-05-25T09:06:28.867+0000] {processor.py:925} INFO - DAG(s) 'read_dataset_event', 'read_dataset_event_from_classic' retrieved from /home/airflow/.local/lib/python3.12/site-packages/airflow/example_dags/example_inlet_event_extra.py
+[2025-05-25T09:06:28.886+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:28.886+0000] {dag.py:3239} INFO - Sync 2 DAGs
+[2025-05-25T09:06:28.908+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:28.908+0000] {dag.py:4180} INFO - Setting next_dagrun for read_dataset_event to 2025-05-24 00:00:00+00:00, run_after=2025-05-25 00:00:00+00:00
+[2025-05-25T09:06:28.912+0000] {logging_mixin.py:190} INFO - [2025-05-25T09:06:28.912+0000] {dag.py:4180} INFO - Setting next_dagrun for read_dataset_event_from_classic to 2025-05-24 00:00:00+00:00, run_after=2025-05-25 00:00:00+00:00
+[2025-05-25T09:06:28.923+0000] {processor.py:208} INFO - Processing /home/airflow/.local/lib/python3.12/site-packages/airflow/example_dags/example_inlet_event_extra.py took 1.161 seconds
