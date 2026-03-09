@@ -1,0 +1,118 @@
+---
+# ─────────────────────────────────────────────────────────────────
+# Role: hadoop – Configure HDFS et YARN
+# Les binaires sont pré-installés dans les images Docker.
+# Ce rôle déploie uniquement les fichiers de configuration.
+# ─────────────────────────────────────────────────────────────────
+
+- name: Vérifier la présence de Hadoop
+  stat:
+    path: "{{ install_dir }}/hadoop/bin/hdfs"
+  register: hadoop_bin
+
+- name: Avertissement si Hadoop absent
+  debug:
+    msg: "⚠️ Hadoop non trouvé dans {{ install_dir }}/hadoop — vérifier l'image Docker"
+  when: not hadoop_bin.stat.exists
+
+- name: Propriétaire répertoire Hadoop
+  file:
+    path:    "{{ install_dir }}/hadoop"
+    owner:   "{{ hadoop_user }}"
+    group:   "{{ hadoop_group }}"
+    recurse: yes
+  when: hadoop_bin.stat.exists
+
+- name: Env Hadoop
+  copy:
+    content: |
+      export HADOOP_HOME={{ install_dir }}/hadoop
+      export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+      export HDFS_NAMENODE_USER={{ hadoop_user }}
+      export HDFS_DATANODE_USER={{ hadoop_user }}
+      export HDFS_SECONDARYNAMENODE_USER={{ hadoop_user }}
+      export YARN_RESOURCEMANAGER_USER={{ hadoop_user }}
+      export YARN_NODEMANAGER_USER={{ hadoop_user }}
+      export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
+      export JAVA_HOME={{ java_home }}
+    dest: /etc/profile.d/hadoop.sh
+    mode: '0755'
+
+- name: core-site.xml
+  template:
+    src:   core-site.xml.j2
+    dest:  "{{ install_dir }}/hadoop/etc/hadoop/core-site.xml"
+    owner: "{{ hadoop_user }}"
+  when: hadoop_bin.stat.exists
+
+- name: hdfs-site.xml
+  template:
+    src:   hdfs-site.xml.j2
+    dest:  "{{ install_dir }}/hadoop/etc/hadoop/hdfs-site.xml"
+    owner: "{{ hadoop_user }}"
+  when: hadoop_bin.stat.exists
+
+- name: yarn-site.xml
+  template:
+    src:   yarn-site.xml.j2
+    dest:  "{{ install_dir }}/hadoop/etc/hadoop/yarn-site.xml"
+    owner: "{{ hadoop_user }}"
+  when: hadoop_bin.stat.exists
+
+- name: mapred-site.xml
+  template:
+    src:   mapred-site.xml.j2
+    dest:  "{{ install_dir }}/hadoop/etc/hadoop/mapred-site.xml"
+    owner: "{{ hadoop_user }}"
+  when: hadoop_bin.stat.exists
+
+- name: hadoop-env.sh – JAVA_HOME
+  lineinfile:
+    path:   "{{ install_dir }}/hadoop/etc/hadoop/hadoop-env.sh"
+    regexp: '^export JAVA_HOME='
+    line:   "export JAVA_HOME={{ java_home }}"
+  when: hadoop_bin.stat.exists
+
+- name: workers
+  template:
+    src:   workers.j2
+    dest:  "{{ install_dir }}/hadoop/etc/hadoop/workers"
+    owner: "{{ hadoop_user }}"
+  when: hadoop_bin.stat.exists
+
+- name: Service NameNode
+  template:
+    src:  hdfs-namenode.service.j2
+    dest: /etc/systemd/system/hdfs-namenode.service
+  when: inventory_hostname in groups['namenode'] and hadoop_bin.stat.exists
+
+- name: Service DataNode
+  template:
+    src:  hdfs-datanode.service.j2
+    dest: /etc/systemd/system/hdfs-datanode.service
+  when: inventory_hostname in groups['datanodes'] and hadoop_bin.stat.exists
+
+- name: Service ResourceManager
+  template:
+    src:  yarn-rm.service.j2
+    dest: /etc/systemd/system/yarn-resourcemanager.service
+  when: inventory_hostname in groups['resourcemanager'] and hadoop_bin.stat.exists
+
+- name: Service NodeManager
+  template:
+    src:  yarn-nm.service.j2
+    dest: /etc/systemd/system/yarn-nodemanager.service
+  when: inventory_hostname in groups['datanodes'] and hadoop_bin.stat.exists
+
+- name: Activer services HDFS/YARN
+  systemd:
+    name:         "{{ item.name }}"
+    enabled:      yes
+    daemon_reload: yes
+  loop:
+    - { name: hdfs-namenode,       when: "{{ inventory_hostname in groups['namenode'] }}" }
+    - { name: hdfs-datanode,       when: "{{ inventory_hostname in groups['datanodes'] }}" }
+    - { name: yarn-resourcemanager, when: "{{ inventory_hostname in groups['resourcemanager'] }}" }
+    - { name: yarn-nodemanager,    when: "{{ inventory_hostname in groups['datanodes'] }}" }
+  when: "item.when | bool and hadoop_bin.stat.exists"
+  ignore_errors: yes

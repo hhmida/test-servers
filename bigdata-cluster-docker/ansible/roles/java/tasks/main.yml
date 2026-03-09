@@ -1,0 +1,30 @@
+---
+- name: Vérifier Java 17
+  command: java -version
+  register: java_check
+  changed_when: false
+  ignore_errors: yes
+
+- name: Installer OpenJDK 17 si absent
+  apt:
+    name:  openjdk-17-jdk
+    state: present
+  when: java_check.rc != 0
+
+- name: JAVA_HOME dans /etc/environment
+  lineinfile:
+    path:   /etc/environment
+    regexp: '^JAVA_HOME='
+    line:   "JAVA_HOME={{ java_home }}"
+
+- name: java.sh dans /etc/profile.d
+  copy:
+    content: |
+      export JAVA_HOME={{ java_home }}
+      export PATH=$PATH:$JAVA_HOME/bin
+    dest: /etc/profile.d/java.sh
+    mode: '0755'
+
+- name: Afficher la version Java
+  debug:
+    msg: "Java disponible : {{ java_check.stderr | default('ok') }}"

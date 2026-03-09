@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<configuration>
+  <property><n>hbase.rootdir</n><value>hdfs://{{ namenode_host }}:9000/hbase</value></property>
+  <property><n>hbase.cluster.distributed</n><value>true</value></property>
+  <property><n>hbase.zookeeper.quorum</n><value>{{ zookeeper_host }}</value></property>
+  <property><n>hbase.zookeeper.property.clientPort</n><value>{{ zookeeper_client_port }}</value></property>
+  <property><n>hbase.master.hostname</n><value>{{ hbase_master_host }}</value></property>
+  <property><n>hbase.unsafe.stream.capability.enforce</n><value>false</value></property>
+  <property><n>phoenix.schema.isNamespaceMappingEnabled</n><value>true</value></property>
+</configuration>

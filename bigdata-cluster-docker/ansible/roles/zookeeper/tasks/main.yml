@@ -1,0 +1,60 @@
+---
+- name: Vérifier ZooKeeper pré-installé
+  stat:
+    path: "{{ install_dir }}/zookeeper/bin/zkServer.sh"
+  register: zk_bin
+
+- name: Télécharger ZooKeeper si absent
+  block:
+    - get_url:
+        url:     "{{ zookeeper_url }}"
+        dest:    "/tmp/zookeeper-{{ zookeeper_version }}.tar.gz"
+        timeout: 120
+    - unarchive:
+        src:        "/tmp/zookeeper-{{ zookeeper_version }}.tar.gz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/apache-zookeeper-{{ zookeeper_version }}-bin"
+        dest:  "{{ install_dir }}/zookeeper"
+        state: link
+  when: not zk_bin.stat.exists
+
+- name: Répertoire data ZooKeeper
+  file:
+    path:  "{{ zookeeper_data_dir }}"
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+
+- name: zoo.cfg
+  template:
+    src:   zoo.cfg.j2
+    dest:  "{{ install_dir }}/zookeeper/conf/zoo.cfg"
+    owner: "{{ hadoop_user }}"
+
+- name: myid
+  copy:
+    content: "1\n"
+    dest:    "{{ zookeeper_data_dir }}/myid"
+    owner:   "{{ hadoop_user }}"
+
+- name: Env ZooKeeper
+  copy:
+    content: |
+      export ZOOKEEPER_HOME={{ install_dir }}/zookeeper
+      export PATH=$PATH:$ZOOKEEPER_HOME/bin
+    dest: /etc/profile.d/zookeeper.sh
+    mode: '0755'
+
+- name: Service ZooKeeper
+  template:
+    src:  zookeeper.service.j2
+    dest: /etc/systemd/system/zookeeper.service
+
+- name: Activer ZooKeeper
+  systemd:
+    name:         zookeeper
+    enabled:      yes
+    state:        started
+    daemon_reload: yes

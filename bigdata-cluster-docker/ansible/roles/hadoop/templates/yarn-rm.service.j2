@@ -1,0 +1,15 @@
+[Unit]
+Description=Hadoop YARN ResourceManager
+After=network.target
+
+[Service]
+User={{ hadoop_user }}
+Group={{ hadoop_group }}
+Type=forking
+ExecStart={{ install_dir }}/hadoop/bin/yarn --daemon start resourcemanager
+ExecStop={{ install_dir }}/hadoop/bin/yarn --daemon stop resourcemanager
+PIDFile={{ pid_dir }}/hadoop-{{ hadoop_user }}-resourcemanager.pid
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

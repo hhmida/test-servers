@@ -1,0 +1,38 @@
+---
+- name: Vérifier Atlas pré-installé
+  stat:
+    path: "{{ install_dir }}/atlas/bin/atlas_start.py"
+  register: atlas_bin
+
+- name: Télécharger Atlas si absent
+  block:
+    - get_url:
+        url:     "{{ atlas_url }}"
+        dest:    "/tmp/atlas-{{ atlas_version }}.tar.gz"
+        timeout: 600
+    - unarchive:
+        src:        "/tmp/atlas-{{ atlas_version }}.tar.gz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/apache-atlas-{{ atlas_version }}-server"
+        dest:  "{{ install_dir }}/atlas"
+        state: link
+  when: not atlas_bin.stat.exists
+
+- name: atlas-application.properties
+  template:
+    src:   atlas-application.properties.j2
+    dest:  "{{ install_dir }}/atlas/conf/atlas-application.properties"
+    owner: "{{ hadoop_user }}"
+
+- name: Service Atlas
+  template:
+    src:  atlas.service.j2
+    dest: /etc/systemd/system/atlas.service
+
+- name: Activer Atlas
+  systemd:
+    name:         atlas
+    enabled:      yes
+    daemon_reload: yes

@@ -1,0 +1,37 @@
+---
+- name: Vérifier Phoenix pré-installé
+  stat:
+    path: "{{ install_dir }}/phoenix/bin/queryserver.py"
+  register: phoenix_bin
+
+- name: Télécharger Phoenix si absent
+  block:
+    - get_url:
+        url:     "{{ apache_mirror }}/phoenix/phoenix-{{ phoenix_version }}/phoenix-hbase-2.5-{{ phoenix_version }}-bin.tar.gz"
+        dest:    "/tmp/phoenix-{{ phoenix_version }}.tar.gz"
+        timeout: 180
+    - unarchive:
+        src:        "/tmp/phoenix-{{ phoenix_version }}.tar.gz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/phoenix-hbase-2.5-{{ phoenix_version }}-bin"
+        dest:  "{{ install_dir }}/phoenix"
+        state: link
+  when: not phoenix_bin.stat.exists
+
+- name: Phoenix jar → HBase lib
+  shell: cp {{ install_dir }}/phoenix/phoenix-server-hbase-*.jar {{ install_dir }}/hbase/lib/
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+
+- name: Service Phoenix QueryServer
+  template:
+    src:  phoenix-queryserver.service.j2
+    dest: /etc/systemd/system/phoenix-queryserver.service
+
+- name: Activer Phoenix
+  systemd:
+    name:         phoenix-queryserver
+    enabled:      yes
+    daemon_reload: yes

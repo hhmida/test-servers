@@ -1,0 +1,13 @@
+---
+- name: Arrêt ordonné
+  hosts: cluster
+  tasks:
+    - systemd: name={{ item }} state=stopped
+      loop: [ranger-admin, atlas, nifi, hiveserver2, hive-metastore, spark-worker, spark-master]
+      ignore_errors: yes
+    - systemd: name={{ item }} state=stopped
+      loop: [yarn-nodemanager, yarn-resourcemanager, hbase-regionserver, hbase-master]
+      ignore_errors: yes
+    - systemd: name={{ item }} state=stopped
+      loop: [hdfs-datanode, hdfs-namenode, kafka, zookeeper]
+      ignore_errors: yes

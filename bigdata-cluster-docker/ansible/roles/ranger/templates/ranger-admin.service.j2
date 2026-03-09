@@ -1,0 +1,14 @@
+[Unit]
+Description=Apache Ranger Admin
+After=network.target
+[Service]
+User={{ hadoop_user }}
+Type=forking
+ExecStart={{ install_dir }}/ranger-admin/ews/ranger-service.sh start
+ExecStop={{ install_dir }}/ranger-admin/ews/ranger-service.sh stop
+Restart=on-failure
+RestartSec=30
+TimeoutStartSec=120
+Environment="JAVA_HOME={{ java_home }}"
+[Install]
+WantedBy=multi-user.target

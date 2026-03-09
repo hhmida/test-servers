@@ -1,0 +1,54 @@
+---
+- name: Vérifier Ranger pré-installé
+  stat:
+    path: "{{ install_dir }}/ranger/ranger-{{ ranger_version }}-admin"
+  register: ranger_dir
+
+- name: Télécharger Ranger si absent
+  block:
+    - get_url:
+        url:     "{{ ranger_url }}"
+        dest:    "/tmp/ranger-{{ ranger_version }}-admin.tar.gz"
+        timeout: 600
+    - file:
+        path:  "{{ install_dir }}/ranger"
+        state: directory
+        owner: "{{ hadoop_user }}"
+    - unarchive:
+        src:        "/tmp/ranger-{{ ranger_version }}-admin.tar.gz"
+        dest:       "{{ install_dir }}/ranger"
+        remote_src: yes
+  when: not ranger_dir.stat.exists
+
+- name: install.properties Ranger
+  template:
+    src:   ranger-admin-install.properties.j2
+    dest:  "{{ install_dir }}/ranger/ranger-{{ ranger_version }}-admin/install.properties"
+    owner: "{{ hadoop_user }}"
+
+- name: Setup Ranger Admin
+  shell: |
+    cd {{ install_dir }}/ranger/ranger-{{ ranger_version }}-admin
+    ./setup.sh
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+  environment:
+    JAVA_HOME: "{{ java_home }}"
+
+- name: Lien ranger-admin
+  file:
+    src:   "{{ install_dir }}/ranger/ranger-{{ ranger_version }}-admin"
+    dest:  "{{ install_dir }}/ranger-admin"
+    state: link
+  ignore_errors: yes
+
+- name: Service Ranger Admin
+  template:
+    src:  ranger-admin.service.j2
+    dest: /etc/systemd/system/ranger-admin.service
+
+- name: Activer Ranger
+  systemd:
+    name:         ranger-admin
+    enabled:      yes
+    daemon_reload: yes

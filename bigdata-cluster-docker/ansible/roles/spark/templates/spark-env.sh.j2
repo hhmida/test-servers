@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+export JAVA_HOME={{ java_home }}
+export HADOOP_HOME={{ install_dir }}/hadoop
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export SPARK_MASTER_HOST={{ namenode_host }}
+export SPARK_MASTER_PORT=7077
+export SPARK_MASTER_WEBUI_PORT=8080
+export SPARK_WORKER_CORES={{ yarn_nodemanager_vcores }}
+export SPARK_WORKER_MEMORY={{ yarn_nodemanager_memory_mb }}m
+export SPARK_DRIVER_MEMORY={{ spark_driver_memory }}
+export SPARK_EXECUTOR_MEMORY={{ spark_executor_memory }}
+export SPARK_LOG_DIR={{ log_dir }}/spark
+export SPARK_PID_DIR={{ pid_dir }}

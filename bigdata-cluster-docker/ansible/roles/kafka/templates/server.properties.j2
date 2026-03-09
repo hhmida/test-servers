@@ -1,0 +1,14 @@
+broker.id=0
+listeners=PLAINTEXT://{{ kafka_host }}:9092
+advertised.listeners=PLAINTEXT://{{ kafka_host }}:9092
+num.network.threads=4
+num.io.threads=8
+log.dirs={{ kafka_log_dir }}
+num.partitions={{ kafka_num_partitions }}
+offsets.topic.replication.factor={{ kafka_replication_factor }}
+transaction.state.log.replication.factor=1
+transaction.state.log.min.isr=1
+log.retention.hours=168
+zookeeper.connect={{ zookeeper_host }}:{{ zookeeper_client_port }}
+auto.create.topics.enable=true
+delete.topic.enable=true

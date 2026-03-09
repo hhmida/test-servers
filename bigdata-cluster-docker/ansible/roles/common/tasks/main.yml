@@ -1,0 +1,96 @@
+---
+# ─────────────────────────────────────────────────────────────────
+# Role: common – Configuration de base
+# En mode Docker, les paquets et l'utilisateur hadoop sont déjà
+# présents dans l'image. Ce rôle se concentre sur la configuration.
+# ─────────────────────────────────────────────────────────────────
+
+- name: Vérifier que l'utilisateur hadoop existe
+  user:
+    name:  "{{ hadoop_user }}"
+    state: present
+    shell: /bin/bash
+
+- name: Sudoers hadoop
+  copy:
+    content: "hadoop ALL=(ALL) NOPASSWD:ALL\n"
+    dest:    /etc/sudoers.d/hadoop
+    mode:    '0440'
+
+- name: Répertoires bigdata
+  file:
+    path:  "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_user }}"
+    group: "{{ hadoop_group }}"
+    mode:  '0755'
+  loop:
+    - "{{ install_dir }}"
+    - "{{ data_dir }}"
+    - "{{ log_dir }}"
+    - "{{ pid_dir }}"
+    - "{{ hdfs_namenode_dir }}"
+    - "{{ hdfs_datanode_dir }}"
+    - "{{ hdfs_secondary_dir }}"
+
+- name: SSH – clé RSA (si absente)
+  openssh_keypair:
+    path:  /home/hadoop/.ssh/id_rsa
+    owner: hadoop
+    group: hadoop
+    type:  rsa
+    size:  4096
+  ignore_errors: yes
+
+- name: SSH – récupérer les clés publiques
+  slurp:
+    src: /home/hadoop/.ssh/id_rsa.pub
+  register: node_pubkey
+
+- name: SSH – distribuer les clés autorisées
+  authorized_key:
+    user:  hadoop
+    key:   "{{ hostvars[item]['node_pubkey']['content'] | b64decode }}"
+    state: present
+  loop: "{{ groups['cluster'] }}"
+
+- name: /etc/hosts – nœuds cluster
+  lineinfile:
+    path:   /etc/hosts
+    line:   "{{ hostvars[item]['ansible_host'] }} {{ item }}"
+    regexp: ".*{{ item }}$"
+    state:  present
+  loop: "{{ groups['cluster'] }}"
+
+- name: SSH config – StrictHostKeyChecking désactivé
+  copy:
+    content: |
+      Host 172.20.0.*
+          StrictHostKeyChecking no
+          UserKnownHostsFile /dev/null
+      Host master1 master2 worker1 worker2 edge
+          StrictHostKeyChecking no
+          UserKnownHostsFile /dev/null
+    dest:  /home/hadoop/.ssh/config
+    owner: hadoop
+    group: hadoop
+    mode:  '0600'
+
+- name: Limites fichiers hadoop (pam_limits)
+  pam_limits:
+    domain:     hadoop
+    limit_type: "{{ item.type }}"
+    limit_item: "{{ item.item }}"
+    value:      "{{ item.value }}"
+  loop:
+    - { type: soft, item: nofile, value: "1048576" }
+    - { type: hard, item: nofile, value: "1048576" }
+    - { type: soft, item: nproc,  value: "131072" }
+    - { type: hard, item: nproc,  value: "131072" }
+  ignore_errors: yes
+
+- name: Démarrer SSH
+  systemd:
+    name:    ssh
+    state:   started
+    enabled: yes

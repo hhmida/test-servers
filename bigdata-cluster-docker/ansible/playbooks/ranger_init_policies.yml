@@ -1,0 +1,34 @@
+---
+- name: Initialisation Ranger via API REST
+  hosts: ranger
+  tasks:
+    - name: Attendre Ranger
+      uri:
+        url:         "http://{{ ranger_host }}:{{ ranger_admin_port }}/service/public/v2/api/service"
+        user:        "{{ ranger_admin_user }}"
+        password:    "{{ ranger_admin_password }}"
+        method:      GET
+        status_code: [200]
+        force_basic_auth: yes
+      retries: 20
+      delay:   15
+      register: ranger_ready
+      until:   ranger_ready.status == 200
+      ignore_errors: yes
+
+    - name: Créer service HDFS
+      uri:
+        url:         "http://{{ ranger_host }}:{{ ranger_admin_port }}/service/public/v2/api/service"
+        user:        "{{ ranger_admin_user }}"
+        password:    "{{ ranger_admin_password }}"
+        method:      POST
+        body_format: json
+        force_basic_auth: yes
+        status_code: [200, 201, 400]
+        body:
+          name:    "hadoop"
+          type:    "hdfs"
+          configs:
+            username:        "hadoop"
+            fs.default.name: "hdfs://{{ namenode_host }}:9000"
+      ignore_errors: yes

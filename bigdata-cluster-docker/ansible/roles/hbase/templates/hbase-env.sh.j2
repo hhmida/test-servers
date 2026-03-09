@@ -1,0 +1,6 @@
+#!/bin/bash
+export JAVA_HOME={{ java_home }}
+export HBASE_HOME={{ install_dir }}/hbase
+export HADOOP_HOME={{ install_dir }}/hadoop
+export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+export HBASE_MANAGES_ZK=false

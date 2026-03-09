@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property><n>mapreduce.framework.name</n><value>yarn</value></property>
+  <property><n>mapreduce.jobhistory.address</n><value>{{ namenode_host }}:10020</value></property>
+  <property><n>mapreduce.jobhistory.webapp.address</n><value>{{ namenode_host }}:19888</value></property>
+  <property><n>yarn.app.mapreduce.am.env</n><value>HADOOP_MAPRED_HOME={{ install_dir }}/hadoop</value></property>
+  <property><n>mapreduce.map.env</n><value>HADOOP_MAPRED_HOME={{ install_dir }}/hadoop</value></property>
+  <property><n>mapreduce.reduce.env</n><value>HADOOP_MAPRED_HOME={{ install_dir }}/hadoop</value></property>
+  <property><n>mapreduce.map.memory.mb</n><value>2048</value></property>
+  <property><n>mapreduce.reduce.memory.mb</n><value>4096</value></property>
+</configuration>

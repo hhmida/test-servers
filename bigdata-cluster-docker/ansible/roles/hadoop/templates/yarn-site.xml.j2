@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property><n>yarn.resourcemanager.hostname</n><value>{{ resourcemanager_host }}</value></property>
+  <property><n>yarn.resourcemanager.address</n><value>{{ resourcemanager_host }}:8032</value></property>
+  <property><n>yarn.resourcemanager.webapp.address</n><value>{{ resourcemanager_host }}:8088</value></property>
+  <property><n>yarn.nodemanager.aux-services</n><value>mapreduce_shuffle</value></property>
+  <property><n>yarn.nodemanager.aux-services.mapreduce.shuffle.class</n><value>org.apache.hadoop.mapred.ShuffleHandler</value></property>
+  <property><n>yarn.nodemanager.resource.memory-mb</n><value>{{ yarn_nodemanager_memory_mb }}</value></property>
+  <property><n>yarn.nodemanager.resource.cpu-vcores</n><value>{{ yarn_nodemanager_vcores }}</value></property>
+  <property><n>yarn.scheduler.minimum-allocation-mb</n><value>{{ yarn_scheduler_min_allocation_mb }}</value></property>
+  <property><n>yarn.scheduler.maximum-allocation-mb</n><value>{{ yarn_scheduler_max_allocation_mb }}</value></property>
+  <property><n>yarn.nodemanager.vmem-check-enabled</n><value>false</value></property>
+  <property><n>yarn.log-aggregation-enable</n><value>true</value></property>
+  <!-- Docker-specific: disable virtual memory check -->
+  <property><n>yarn.nodemanager.pmem-check-enabled</n><value>false</value></property>
+</configuration>

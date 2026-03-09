@@ -1,0 +1,24 @@
+spark.master                          spark://{{ namenode_host }}:7077
+spark.eventLog.enabled                true
+spark.eventLog.dir                    hdfs://{{ namenode_host }}:9000/spark-logs
+spark.history.fs.logDirectory         hdfs://{{ namenode_host }}:9000/spark-logs
+spark.serializer                      org.apache.spark.serializer.KryoSerializer
+spark.driver.memory                   {{ spark_driver_memory }}
+spark.executor.memory                 {{ spark_executor_memory }}
+spark.executor.cores                  {{ spark_executor_cores }}
+spark.sql.extensions                  org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions
+spark.sql.catalog.spark_catalog       org.apache.iceberg.spark.SparkSessionCatalog
+spark.sql.catalog.spark_catalog.type  hive
+spark.sql.catalog.local               org.apache.iceberg.spark.SparkCatalog
+spark.sql.catalog.local.type          hadoop
+spark.sql.catalog.local.warehouse     hdfs://{{ namenode_host }}:9000/iceberg-warehouse
+spark.sql.catalog.cold                org.apache.iceberg.spark.SparkCatalog
+spark.sql.catalog.cold.type           hadoop
+spark.sql.catalog.cold.warehouse      hdfs://{{ namenode_host }}:9000/data/cold
+spark.sql.warehouse.dir               hdfs://{{ namenode_host }}:9000/user/hive/warehouse
+spark.hadoop.hive.metastore.uris      thrift://{{ hive_host }}:9083
+spark.dynamicAllocation.enabled       true
+spark.dynamicAllocation.minExecutors  1
+spark.dynamicAllocation.maxExecutors  8
+spark.shuffle.service.enabled         true
+spark.pyspark.python                  python3

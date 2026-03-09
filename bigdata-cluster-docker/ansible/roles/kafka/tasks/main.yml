@@ -1,0 +1,44 @@
+---
+- name: Vérifier Kafka pré-installé
+  stat:
+    path: "{{ install_dir }}/kafka/bin/kafka-server-start.sh"
+  register: kafka_bin
+
+- name: Télécharger Kafka si absent
+  block:
+    - get_url:
+        url:     "{{ kafka_url }}"
+        dest:    "/tmp/kafka-{{ kafka_version }}.tgz"
+        timeout: 180
+    - unarchive:
+        src:        "/tmp/kafka-{{ kafka_version }}.tgz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/kafka_{{ scala_version }}-{{ kafka_version }}"
+        dest:  "{{ install_dir }}/kafka"
+        state: link
+  when: not kafka_bin.stat.exists
+
+- name: Répertoire logs Kafka
+  file:
+    path:  "{{ kafka_log_dir }}"
+    state: directory
+    owner: "{{ hadoop_user }}"
+
+- name: server.properties
+  template:
+    src:   server.properties.j2
+    dest:  "{{ install_dir }}/kafka/config/server.properties"
+    owner: "{{ hadoop_user }}"
+
+- name: Service Kafka
+  template:
+    src:  kafka.service.j2
+    dest: /etc/systemd/system/kafka.service
+
+- name: Activer Kafka
+  systemd:
+    name:         kafka
+    enabled:      yes
+    daemon_reload: yes

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property>
+    <n>fs.defaultFS</n>
+    <value>hdfs://{{ namenode_host }}:9000</value>
+  </property>
+  <property>
+    <n>hadoop.tmp.dir</n>
+    <value>{{ data_dir }}/hadoop/tmp</value>
+  </property>
+  <property>
+    <n>hadoop.proxyuser.hadoop.hosts</n>
+    <value>*</value>
+  </property>
+  <property>
+    <n>hadoop.proxyuser.hadoop.groups</n>
+    <value>*</value>
+  </property>
+  <property>
+    <n>io.file.buffer.size</n>
+    <value>131072</value>
+  </property>
+</configuration>

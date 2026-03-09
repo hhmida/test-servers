@@ -1,0 +1,14 @@
+atlas.server.http.port=21000
+atlas.enableTLS=false
+atlas.graph.storage.backend=hbase2
+atlas.graph.storage.hbase.table=apache_atlas_janus
+atlas.graph.storage.hostname={{ zookeeper_host }}
+atlas.graph.index.search.backend=solr
+atlas.graph.index.search.solr.mode=cloud
+atlas.graph.index.search.solr.zookeeper-url={{ zookeeper_host }}:{{ zookeeper_client_port }}
+atlas.notification.embedded=false
+atlas.kafka.bootstrap.servers={{ kafka_host }}:9092
+atlas.kafka.zookeeper.connect={{ zookeeper_host }}:{{ zookeeper_client_port }}
+atlas.authentication.method.file=true
+atlas.cluster.name={{ cluster_name }}
+atlas.rest.address=http://{{ atlas_host }}:21000

@@ -1,0 +1,31 @@
+---
+- name: Créer un compte étudiant
+  hosts: cluster
+  vars:
+    student_password: "Student@2024!"
+  tasks:
+    - name: Créer l'utilisateur {{ username }}
+      user:
+        name:       "{{ username }}"
+        password:   "{{ student_password | password_hash('sha512') }}"
+        shell:      /bin/bash
+        groups:     hadoop
+        create_home: yes
+
+    - name: Répertoire HDFS
+      shell: |
+        {{ install_dir }}/hadoop/bin/hdfs dfs -mkdir -p /user/{{ username }}
+        {{ install_dir }}/hadoop/bin/hdfs dfs -chown {{ username }} /user/{{ username }}
+      become_user: hadoop
+      run_once: true
+      delegate_to: master1
+      ignore_errors: yes
+
+    - name: Base Hive
+      shell: |
+        {{ install_dir }}/hive/bin/beeline -u jdbc:hive2://{{ hive_host }}:10000 \
+          -e "CREATE DATABASE IF NOT EXISTS {{ username }};"
+      become_user: hadoop
+      run_once: true
+      delegate_to: master2
+      ignore_errors: yes

@@ -1,0 +1,32 @@
+---
+- name: Installer Cockpit (si absent)
+  apt:
+    name:
+      - cockpit
+      - cockpit-system
+      - cockpit-storaged
+    state:        present
+    update_cache: yes
+
+- name: Activer cockpit.socket
+  systemd:
+    name:         cockpit.socket
+    enabled:      yes
+    state:        started
+    daemon_reload: yes
+
+- name: cockpit.conf
+  file:
+    path:  /etc/cockpit
+    state: directory
+
+- name: Personnalisation Cockpit
+  template:
+    src:  cockpit.conf.j2
+    dest: /etc/cockpit/cockpit.conf
+
+- name: Ajouter hadoop au groupe sudo
+  user:
+    name:   hadoop
+    groups: sudo
+    append: yes

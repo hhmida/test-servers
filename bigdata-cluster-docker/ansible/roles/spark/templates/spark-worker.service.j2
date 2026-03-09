@@ -1,0 +1,12 @@
+[Unit]
+Description=Apache Spark Worker
+After=spark-master.service
+[Service]
+User={{ hadoop_user }}
+Type=forking
+ExecStart={{ install_dir }}/spark/sbin/start-worker.sh spark://{{ namenode_host }}:7077
+ExecStop={{ install_dir }}/spark/sbin/stop-worker.sh
+Restart=on-failure
+LimitNOFILE=1048576
+[Install]
+WantedBy=multi-user.target

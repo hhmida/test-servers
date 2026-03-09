@@ -1,0 +1,6 @@
+---
+- name: restart cockpit
+  systemd:
+    name:  cockpit
+    state: restarted
+  ignore_errors: yes

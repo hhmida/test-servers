@@ -1,0 +1,28 @@
+global:
+  scrape_interval: 15s
+  external_labels:
+    cluster: '{{ cluster_name }}'
+
+scrape_configs:
+  - job_name: 'node'
+    static_configs:
+      - targets:
+{% for host in groups['cluster'] %}
+          - '{{ hostvars[host]["ansible_host"] }}:9100'
+{% endfor %}
+
+  - job_name: 'hadoop-namenode'
+    metrics_path: '/jmx'
+    params:
+      qry: ['Hadoop:*']
+    static_configs:
+      - targets: ['{{ namenode_ip }}:9870']
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets: ['{{ namenode_ip }}:9991']
+
+  - job_name: 'nifi'
+    metrics_path: '/nifi-api/flow/metrics/prometheus'
+    static_configs:
+      - targets: ['{{ edge_ip }}:{{ nifi_http_port }}']

@@ -1,0 +1,66 @@
+---
+- name: Vérifier HBase pré-installé
+  stat:
+    path: "{{ install_dir }}/hbase/bin/hbase"
+  register: hbase_bin
+
+- name: Télécharger HBase si absent
+  block:
+    - get_url:
+        url:     "{{ hbase_url }}"
+        dest:    "/tmp/hbase-{{ hbase_version }}.tar.gz"
+        timeout: 300
+    - unarchive:
+        src:        "/tmp/hbase-{{ hbase_version }}.tar.gz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/hbase-{{ hbase_version }}"
+        dest:  "{{ install_dir }}/hbase"
+        state: link
+  when: not hbase_bin.stat.exists
+
+- name: hbase-site.xml
+  template:
+    src:   hbase-site.xml.j2
+    dest:  "{{ install_dir }}/hbase/conf/hbase-site.xml"
+    owner: "{{ hadoop_user }}"
+
+- name: hbase-env.sh
+  template:
+    src:   hbase-env.sh.j2
+    dest:  "{{ install_dir }}/hbase/conf/hbase-env.sh"
+    owner: "{{ hadoop_user }}"
+    mode:  '0755'
+
+- name: regionservers
+  template:
+    src:   regionservers.j2
+    dest:  "{{ install_dir }}/hbase/conf/regionservers"
+    owner: "{{ hadoop_user }}"
+
+- name: Service HBase Master
+  template:
+    src:  hbase-master.service.j2
+    dest: /etc/systemd/system/hbase-master.service
+  when: inventory_hostname in groups['hbase_master']
+
+- name: Service HBase RegionServer
+  template:
+    src:  hbase-regionserver.service.j2
+    dest: /etc/systemd/system/hbase-regionserver.service
+  when: inventory_hostname in groups['hbase_regionservers']
+
+- name: Activer HBase
+  systemd:
+    name:         hbase-master
+    enabled:      yes
+    daemon_reload: yes
+  when: inventory_hostname in groups['hbase_master']
+
+- name: Activer RegionServer
+  systemd:
+    name:         hbase-regionserver
+    enabled:      yes
+    daemon_reload: yes
+  when: inventory_hostname in groups['hbase_regionservers']

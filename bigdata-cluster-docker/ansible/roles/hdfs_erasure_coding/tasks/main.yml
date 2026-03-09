@@ -1,0 +1,58 @@
+---
+- name: Attendre HDFS NameNode disponible
+  wait_for:
+    host:    "{{ namenode_host }}"
+    port:    9870
+    timeout: 120
+  ignore_errors: yes
+
+- name: Activer policy RS-3-2-1024k
+  command: "{{ install_dir }}/hadoop/bin/hdfs ec -enablePolicy -policy RS-3-2-1024k"
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+
+- name: Activer policy RS-6-3-1024k
+  command: "{{ install_dir }}/hadoop/bin/hdfs ec -enablePolicy -policy RS-6-3-1024k"
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+
+- name: Activer policy XOR-2-1-1024k
+  command: "{{ install_dir }}/hadoop/bin/hdfs ec -enablePolicy -policy XOR-2-1-1024k"
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+
+- name: Créer répertoires EC
+  command: "{{ install_dir }}/hadoop/bin/hdfs dfs -mkdir -p {{ item.path }}"
+  become_user: "{{ hadoop_user }}"
+  loop: "{{ hdfs_ec_paths }}"
+  ignore_errors: yes
+
+- name: Appliquer policies EC
+  command: "{{ install_dir }}/hadoop/bin/hdfs ec -setPolicy -policy {{ item.policy }} -path {{ item.path }}"
+  become_user: "{{ hadoop_user }}"
+  loop: "{{ hdfs_ec_paths }}"
+  ignore_errors: yes
+
+- name: Répertoire test-ec (XOR)
+  shell: |
+    {{ install_dir }}/hadoop/bin/hdfs dfs -mkdir -p /data/test-ec
+    {{ install_dir }}/hadoop/bin/hdfs ec -setPolicy -policy XOR-2-1-1024k -path /data/test-ec
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+
+- name: Répertoires HDFS standards
+  shell: |
+    {{ install_dir }}/hadoop/bin/hdfs dfs -mkdir -p /user /user/hive/warehouse /spark-logs /iceberg-warehouse /tmp
+    {{ install_dir }}/hadoop/bin/hdfs dfs -chmod 777 /tmp /user/hive/warehouse /spark-logs
+  become_user: "{{ hadoop_user }}"
+  ignore_errors: yes
+
+- name: Vérifier policies appliquées
+  command: "{{ install_dir }}/hadoop/bin/hdfs ec -listPolicies"
+  become_user: "{{ hadoop_user }}"
+  register: ec_list
+  changed_when: false
+  ignore_errors: yes
+
+- debug:
+    msg: "{{ ec_list.stdout_lines }}"

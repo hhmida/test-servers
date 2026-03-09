@@ -1,0 +1,211 @@
+# ════════════════════════════════════════════════════════════════
+# BigData Cluster – Docker Compose v3
+# Ubuntu 24.04 | systemd | Ansible-provisionné
+# ════════════════════════════════════════════════════════════════
+name: bigdata-cluster
+
+# ─── Variables communes ──────────────────────────────────────────
+x-common: &common
+  restart: unless-stopped
+  # systemd dans Docker : nécessite privileged + montage cgroup
+  privileged: true
+  security_opt:
+    - seccomp:unconfined
+  tmpfs:
+    - /run
+    - /run/lock
+    - /tmp:exec
+  volumes:
+    - /sys/fs/cgroup:/sys/fs/cgroup:rw
+  networks:
+    - bigdata-net
+
+x-healthcheck: &hc-ssh
+  healthcheck:
+    test: ["CMD", "bash", "-c", "systemctl is-active ssh"]
+    interval: 15s
+    timeout: 5s
+    retries: 10
+    start_period: 30s
+
+# ════════════════════════════════════════════════════════════════
+services:
+
+  # ─── master1 ─────────────────────────────────────────────────
+  master1:
+    <<: [*common, *hc-ssh]
+    image: bigdata/master1
+    build:
+      context: ..
+      dockerfile: docker/master1/Dockerfile
+    container_name: master1
+    hostname: master1
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.11
+    ports:
+      - "9870:9870"    # HDFS NameNode Web UI
+      - "8088:8088"    # YARN Resource Manager
+      - "8080:8080"    # Spark Master Web UI
+      - "7077:7077"    # Spark Master RPC
+      - "9000:9000"    # HDFS RPC
+      - "2181:2181"    # ZooKeeper client
+      - "9092:9092"    # Kafka broker
+      - "10020:10020"  # MapReduce JobHistory
+      - "19888:19888"  # MapReduce JobHistory Web
+      - "9091:9090"    # Cockpit (évite conflit avec Prometheus edge)
+    volumes:
+      - master1-hadoop-data:/data/hdfs/namenode
+      - master1-zk-data:/data/zookeeper
+      - master1-kafka-data:/data/kafka/logs
+      - bigdata-install:/opt/bigdata
+    mem_limit: 28g
+    memswap_limit: 28g
+    #cpus: "4"
+    environment:
+      - NODE_ROLE=master1
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+  # ─── master2 ─────────────────────────────────────────────────
+  master2:
+    <<: [*common, *hc-ssh]
+    image: bigdata/master2
+    build:
+      context: ..
+      dockerfile: docker/master2/Dockerfile
+    container_name: master2
+    hostname: master2
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.12
+    ports:
+      - "9868:9868"    # HDFS Secondary NameNode
+      - "9083:9083"    # Hive Metastore Thrift
+      - "10000:10000"  # HiveServer2 Thrift
+      - "10002:10002"  # HiveServer2 Web UI
+      - "16010:16010"  # HBase Master Web UI
+      - "16000:16000"  # HBase Master RPC
+      - "21000:21000"  # Atlas
+      - "6080:6080"    # Ranger Admin
+      - "9092:9092"    # Ranger Admin (port alternatif ignoré)
+      - "9092:9092"    # placeholder
+      - "9093:9090"    # Cockpit master2
+    volumes:
+      - master2-hive-data:/opt/bigdata/hive/metastore_db
+      - master2-hbase-data:/data/hbase
+    mem_limit: 26g
+    memswap_limit: 26g
+    #cpus: "8"
+    environment:
+      - NODE_ROLE=master2
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    depends_on:
+      master1:
+        condition: service_healthy
+
+  # ─── worker1 ─────────────────────────────────────────────────
+  worker1:
+    <<: [*common, *hc-ssh]
+    image: bigdata/worker
+    build:
+      context: ..
+      dockerfile: docker/worker/Dockerfile
+    container_name: worker1
+    hostname: worker1
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.21
+    ports:
+      - "9864:9864"    # DataNode HTTP
+      - "8042:8042"    # NodeManager Web UI
+      - "8081:8081"    # Spark Worker Web UI
+      - "16020:16020"  # HBase RegionServer RPC
+      - "16030:16030"  # HBase RegionServer Web UI
+      - "9094:9090"    # Cockpit worker1
+    volumes:
+      - worker1-hdfs-data1:/data/hdfs/datanode
+      - worker1-hdfs-data2:/data/hdfs/datanode2
+    mem_limit: 28g
+    memswap_limit: 28g
+    #cpus: "8"
+    environment:
+      - NODE_ROLE=worker1
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    depends_on:
+      master1:
+        condition: service_healthy
+
+
+  # ─── edge ────────────────────────────────────────────────────
+  edge:
+    <<: [*common, *hc-ssh]
+    image: bigdata/edge
+    build:
+      context: ..
+      dockerfile: docker/edge/Dockerfile
+    container_name: edge
+    hostname: edge
+    networks:
+      bigdata-net:
+        ipv4_address: 172.20.0.31
+    ports:
+      - "8180:8080"    # NiFi HTTP (8080 pris par Spark master)
+      - "8443:8443"    # NiFi HTTPS
+      - "8765:8765"    # Phoenix QueryServer
+      - "9096:9090"    # Prometheus (remappé, 9090 pris par Cockpit)
+      - "3000:3000"    # Grafana
+      - "9097:9090"    # Cockpit edge (via traefik ou accès direct)
+    volumes:
+      - edge-nifi-data:/data/nifi
+      - edge-prometheus-data:/data/prometheus
+    mem_limit: 16g
+    memswap_limit: 16g
+    #cpus: "8"
+    environment:
+      - NODE_ROLE=edge
+      - JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+    depends_on:
+      master1:
+        condition: service_healthy
+
+# ════════════════════════════════════════════════════════════════
+# Réseau
+# ════════════════════════════════════════════════════════════════
+networks:
+  bigdata-net:
+    driver: bridge
+    name: bigdata-net
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+# ════════════════════════════════════════════════════════════════
+# Volumes persistants
+# ════════════════════════════════════════════════════════════════
+volumes:
+  # master1
+  master1-hadoop-data:
+    name: bigdata-master1-namenode
+  master1-zk-data:
+    name: bigdata-master1-zookeeper
+  master1-kafka-data:
+    name: bigdata-master1-kafka
+  bigdata-install:
+    name: bigdata-install
+  # master2
+  master2-hive-data:
+    name: bigdata-master2-hive
+  master2-hbase-data:
+    name: bigdata-master2-hbase
+  # worker1
+  worker1-hdfs-data1:
+    name: bigdata-worker1-hdfs1
+  worker1-hdfs-data2:
+    name: bigdata-worker1-hdfs2
+
+  # edge
+  edge-nifi-data:
+    name: bigdata-edge-nifi
+  edge-prometheus-data:
+    name: bigdata-edge-prometheus

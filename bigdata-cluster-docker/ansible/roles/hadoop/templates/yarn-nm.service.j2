@@ -1,0 +1,16 @@
+[Unit]
+Description=Hadoop YARN NodeManager
+After=network.target
+
+[Service]
+User={{ hadoop_user }}
+Group={{ hadoop_group }}
+Type=forking
+ExecStart={{ install_dir }}/hadoop/bin/yarn --daemon start nodemanager
+ExecStop={{ install_dir }}/hadoop/bin/yarn --daemon stop nodemanager
+PIDFile={{ pid_dir }}/hadoop-{{ hadoop_user }}-nodemanager.pid
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,13 @@
+[Unit]
+Description=Apache NiFi
+After=network.target
+[Service]
+User={{ hadoop_user }}
+Type=forking
+ExecStart={{ install_dir }}/nifi/bin/nifi.sh start
+ExecStop={{ install_dir }}/nifi/bin/nifi.sh stop
+PIDFile={{ install_dir }}/nifi/run/nifi.pid
+Restart=on-failure
+LimitNOFILE=1048576
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,48 @@
+---
+- name: Vérifier NiFi pré-installé
+  stat:
+    path: "{{ install_dir }}/nifi/bin/nifi.sh"
+  register: nifi_bin
+
+- name: Télécharger NiFi si absent
+  block:
+    - get_url:
+        url:     "{{ nifi_url }}"
+        dest:    "/tmp/nifi-{{ nifi_version }}.zip"
+        timeout: 600
+    - unarchive:
+        src:        "/tmp/nifi-{{ nifi_version }}.zip"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/nifi-{{ nifi_version }}"
+        dest:  "{{ install_dir }}/nifi"
+        state: link
+  when: not nifi_bin.stat.exists
+
+- name: Répertoires NiFi
+  file:
+    path:  "{{ item }}"
+    state: directory
+    owner: "{{ hadoop_user }}"
+  loop:
+    - "{{ data_dir }}/nifi/content_repository"
+    - "{{ data_dir }}/nifi/flowfile_repository"
+    - "{{ data_dir }}/nifi/provenance_repository"
+
+- name: nifi.properties
+  template:
+    src:   nifi.properties.j2
+    dest:  "{{ install_dir }}/nifi/conf/nifi.properties"
+    owner: "{{ hadoop_user }}"
+
+- name: Service NiFi
+  template:
+    src:  nifi.service.j2
+    dest: /etc/systemd/system/nifi.service
+
+- name: Activer NiFi
+  systemd:
+    name:         nifi
+    enabled:      yes
+    daemon_reload: yes

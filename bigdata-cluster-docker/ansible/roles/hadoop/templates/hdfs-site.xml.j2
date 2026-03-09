@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+  <property><n>dfs.replication</n><value>{{ hdfs_replication_factor }}</value></property>
+  <property><n>dfs.blocksize</n><value>{{ hdfs_block_size }}</value></property>
+  <property><n>dfs.namenode.name.dir</n><value>file://{{ hdfs_namenode_dir }}</value></property>
+  <property><n>dfs.datanode.data.dir</n><value>file://{{ hdfs_datanode_dir }}</value></property>
+  <property><n>dfs.namenode.secondary.http-address</n><value>{{ secondary_namenode_host }}:9868</value></property>
+  <property><n>dfs.namenode.http-address</n><value>{{ namenode_host }}:9870</value></property>
+  <property><n>dfs.permissions.enabled</n><value>false</value></property>
+  <property><n>dfs.datanode.du.reserved</n><value>1073741824</value></property>
+  <!-- Erasure Coding -->
+  <property><n>dfs.namenode.ec.system.default.policy</n><value>RS-3-2-1024k</value></property>
+  <property><n>dfs.datanode.ec.reconstruction.threads</n><value>4</value></property>
+  <property><n>io.erasurecode.codec.rs.rawcoders</n><value>rs_native,rs_java</value></property>
+  <property><n>dfs.namenode.handler.count</n><value>20</value></property>
+</configuration>

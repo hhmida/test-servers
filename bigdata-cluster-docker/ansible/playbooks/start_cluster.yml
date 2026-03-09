@@ -1,0 +1,39 @@
+---
+- name: Démarrage ordonné
+  hosts: cluster
+  tasks:
+    - systemd: name=zookeeper state=started
+      when: inventory_hostname in groups['zookeeper']
+    - pause: seconds=10
+    - systemd: name=kafka state=started
+      when: inventory_hostname in groups['kafka']
+    - systemd: name=hdfs-namenode state=started
+      when: inventory_hostname in groups['namenode']
+    - pause: seconds=20
+    - systemd: name=hdfs-datanode state=started
+      when: inventory_hostname in groups['datanodes']
+    - systemd: name=yarn-resourcemanager state=started
+      when: inventory_hostname in groups['resourcemanager']
+    - systemd: name=yarn-nodemanager state=started
+      when: inventory_hostname in groups['datanodes']
+    - systemd: name=hbase-master state=started
+      when: inventory_hostname in groups['hbase_master']
+    - pause: seconds=10
+    - systemd: name=hbase-regionserver state=started
+      when: inventory_hostname in groups['hbase_regionservers']
+    - systemd: name=hive-metastore state=started
+      when: inventory_hostname in groups['hive']
+    - pause: seconds=15
+    - systemd: name=hiveserver2 state=started
+      when: inventory_hostname in groups['hive']
+    - systemd: name=spark-master state=started
+      when: inventory_hostname in groups['spark_master']
+    - systemd: name=spark-worker state=started
+      when: inventory_hostname in groups['spark_workers']
+    - systemd: name=nifi state=started
+      when: inventory_hostname in groups['nifi']
+    - systemd: name=atlas state=started
+      when: inventory_hostname in groups['atlas']
+    - systemd: name=ranger-admin state=started
+      when: inventory_hostname in groups['ranger']
+  ignore_errors: yes

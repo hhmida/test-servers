@@ -1,0 +1,16 @@
+[Unit]
+Description=Apache ZooKeeper
+After=network.target
+
+[Service]
+User={{ hadoop_user }}
+Group={{ hadoop_group }}
+ExecStart={{ install_dir }}/zookeeper/bin/zkServer.sh start-foreground
+ExecStop={{ install_dir }}/zookeeper/bin/zkServer.sh stop
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,12 @@
+[Unit]
+Description=Apache Kafka
+After=zookeeper.service
+[Service]
+User={{ hadoop_user }}
+ExecStart={{ install_dir }}/kafka/bin/kafka-server-start.sh {{ install_dir }}/kafka/config/server.properties
+ExecStop={{ install_dir }}/kafka/bin/kafka-server-stop.sh
+Restart=on-failure
+RestartSec=15
+LimitNOFILE=1048576
+[Install]
+WantedBy=multi-user.target

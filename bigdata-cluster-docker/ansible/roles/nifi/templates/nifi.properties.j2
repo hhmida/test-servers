@@ -1,0 +1,13 @@
+nifi.version={{ nifi_version }}
+nifi.web.http.host={{ nifi_host }}
+nifi.web.http.port={{ nifi_http_port }}
+nifi.web.https.host=
+nifi.web.https.port=
+nifi.ui.banner.text=BigData Cluster – {{ cluster_name }}
+nifi.sensitive.props.key=nifi-bigdata-2024!
+nifi.cluster.is.node=false
+nifi.zookeeper.connect.string={{ zookeeper_host }}:{{ zookeeper_client_port }}
+nifi.provenance.repository.directory.default={{ data_dir }}/nifi/provenance_repository
+nifi.provenance.repository.max.storage.time=24 hours
+nifi.content.repository.directory.default={{ data_dir }}/nifi/content_repository
+nifi.flowfile.repository.directory={{ data_dir }}/nifi/flowfile_repository

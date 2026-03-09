@@ -1,0 +1,11 @@
+# Fichiers à exclure du contexte de build Docker
+ansible/
+docs/
+*.md
+*.zip
+packer/
+.git/
+.gitignore
+**/.DS_Store
+**/node_modules
+**/__pycache__

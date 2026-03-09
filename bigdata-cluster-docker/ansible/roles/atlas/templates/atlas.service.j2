@@ -1,0 +1,13 @@
+[Unit]
+Description=Apache Atlas
+After=hbase-master.service kafka.service
+[Service]
+User={{ hadoop_user }}
+Type=forking
+ExecStart={{ install_dir }}/atlas/bin/atlas_start.py
+ExecStop={{ install_dir }}/atlas/bin/atlas_stop.py
+Restart=on-failure
+RestartSec=30
+TimeoutStartSec=180
+[Install]
+WantedBy=multi-user.target

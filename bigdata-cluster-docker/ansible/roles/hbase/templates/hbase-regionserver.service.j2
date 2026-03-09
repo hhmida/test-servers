@@ -1,0 +1,11 @@
+[Unit]
+Description=Apache HBase RegionServer
+After=hbase-master.service
+[Service]
+User={{ hadoop_user }}
+ExecStart={{ install_dir }}/hbase/bin/hbase regionserver start
+Restart=on-failure
+RestartSec=15
+StandardOutput=journal
+[Install]
+WantedBy=multi-user.target

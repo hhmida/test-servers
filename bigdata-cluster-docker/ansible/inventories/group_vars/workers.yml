@@ -1,0 +1,4 @@
+---
+is_worker: true
+yarn_nodemanager_memory_mb: 22528
+yarn_nodemanager_vcores: 7

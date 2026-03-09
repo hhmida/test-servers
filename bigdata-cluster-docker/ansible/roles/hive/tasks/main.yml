@@ -1,0 +1,73 @@
+---
+- name: Vérifier Hive pré-installé
+  stat:
+    path: "{{ install_dir }}/hive/bin/hive"
+  register: hive_bin
+
+- name: Télécharger Hive si absent
+  block:
+    - get_url:
+        url:     "{{ hive_url }}"
+        dest:    "/tmp/hive-{{ hive_version }}.tar.gz"
+        timeout: 300
+    - unarchive:
+        src:        "/tmp/hive-{{ hive_version }}.tar.gz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/apache-hive-{{ hive_version }}-bin"
+        dest:  "{{ install_dir }}/hive"
+        state: link
+  when: not hive_bin.stat.exists
+
+- name: Propriétaire Hive
+  file:
+    path:    "{{ install_dir }}/hive"
+    owner:   "{{ hadoop_user }}"
+    group:   "{{ hadoop_group }}"
+    recurse: yes
+
+- name: Env Hive
+  copy:
+    content: |
+      export HIVE_HOME={{ install_dir }}/hive
+      export PATH=$PATH:$HIVE_HOME/bin
+    dest: /etc/profile.d/hive.sh
+    mode: '0755'
+
+- name: hive-site.xml
+  template:
+    src:   hive-site.xml.j2
+    dest:  "{{ install_dir }}/hive/conf/hive-site.xml"
+    owner: "{{ hadoop_user }}"
+
+- name: hive-env.sh
+  template:
+    src:   hive-env.sh.j2
+    dest:  "{{ install_dir }}/hive/conf/hive-env.sh"
+    owner: "{{ hadoop_user }}"
+    mode:  '0755'
+
+- name: Schéma Hive (Derby)
+  command: "{{ install_dir }}/hive/bin/schematool -dbType derby -initSchema"
+  become_user: "{{ hadoop_user }}"
+  args:
+    chdir: "{{ install_dir }}/hive"
+  ignore_errors: yes
+
+- name: Service HiveMetastore
+  template:
+    src:  hive-metastore.service.j2
+    dest: /etc/systemd/system/hive-metastore.service
+
+- name: Service HiveServer2
+  template:
+    src:  hiveserver2.service.j2
+    dest: /etc/systemd/system/hiveserver2.service
+
+- name: Activer Hive
+  systemd:
+    name:         "{{ item }}"
+    enabled:      yes
+    daemon_reload: yes
+  loop: [hive-metastore, hiveserver2]

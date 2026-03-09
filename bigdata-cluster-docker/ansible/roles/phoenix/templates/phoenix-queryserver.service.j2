@@ -1,0 +1,11 @@
+[Unit]
+Description=Apache Phoenix QueryServer
+After=hbase-master.service
+[Service]
+User={{ hadoop_user }}
+ExecStart={{ install_dir }}/phoenix/bin/queryserver.py start
+ExecStop={{ install_dir }}/phoenix/bin/queryserver.py stop
+Type=forking
+Restart=on-failure
+[Install]
+WantedBy=multi-user.target

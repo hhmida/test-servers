@@ -1,0 +1,83 @@
+---
+- name: Vérifier Spark pré-installé
+  stat:
+    path: "{{ install_dir }}/spark/bin/spark-submit"
+  register: spark_bin
+
+- name: Télécharger Spark si absent
+  block:
+    - get_url:
+        url:     "{{ spark_url }}"
+        dest:    "/tmp/spark-{{ spark_version }}.tgz"
+        timeout: 300
+    - unarchive:
+        src:        "/tmp/spark-{{ spark_version }}.tgz"
+        dest:       "{{ install_dir }}"
+        remote_src: yes
+    - file:
+        src:   "{{ install_dir }}/spark-{{ spark_version }}-bin-hadoop3"
+        dest:  "{{ install_dir }}/spark"
+        state: link
+  when: not spark_bin.stat.exists
+
+- name: Propriétaire Spark
+  file:
+    path:    "{{ install_dir }}/spark"
+    owner:   "{{ hadoop_user }}"
+    group:   "{{ hadoop_group }}"
+    recurse: yes
+
+- name: Env Spark
+  copy:
+    content: |
+      export SPARK_HOME={{ install_dir }}/spark
+      export PATH=$PATH:$SPARK_HOME/bin:$SPARK_HOME/sbin
+      export PYSPARK_PYTHON=python3
+      export HADOOP_CONF_DIR={{ install_dir }}/hadoop/etc/hadoop
+    dest: /etc/profile.d/spark.sh
+    mode: '0755'
+
+- name: spark-env.sh
+  template:
+    src:   spark-env.sh.j2
+    dest:  "{{ install_dir }}/spark/conf/spark-env.sh"
+    owner: "{{ hadoop_user }}"
+    mode:  '0755'
+
+- name: spark-defaults.conf
+  template:
+    src:   spark-defaults.conf.j2
+    dest:  "{{ install_dir }}/spark/conf/spark-defaults.conf"
+    owner: "{{ hadoop_user }}"
+
+- name: workers Spark
+  template:
+    src:   workers.j2
+    dest:  "{{ install_dir }}/spark/conf/workers"
+    owner: "{{ hadoop_user }}"
+
+- name: Service Spark Master
+  template:
+    src:  spark-master.service.j2
+    dest: /etc/systemd/system/spark-master.service
+  when: inventory_hostname in groups['spark_master']
+
+- name: Service Spark Worker
+  template:
+    src:  spark-worker.service.j2
+    dest: /etc/systemd/system/spark-worker.service
+  when: inventory_hostname in groups['spark_workers']
+
+- name: Activer Spark Master
+  systemd:
+    name: spark-master
+    enabled: yes
+    daemon_reload: yes
+  when: inventory_hostname in groups['spark_master']
+
+- name: Activer Spark Worker
+  systemd:
+    name: spark-worker
+    enabled: yes
+    daemon_reload: yes
+  when: inventory_hostname in groups['spark_workers']

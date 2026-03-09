@@ -1,0 +1,11 @@
+[Unit]
+Description=Apache HiveServer2
+After=hive-metastore.service
+[Service]
+User={{ hadoop_user }}
+ExecStart={{ install_dir }}/hive/bin/hiveserver2
+Restart=on-failure
+RestartSec=15
+StandardOutput=journal
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,91 @@
+---
+# ═══════════════════════════════════════════════════════════════
+# Déploiement BigData Cluster – Docker Mode
+# Les conteneurs sont déjà lancés avec les binaires pré-installés.
+# Ansible configure les fichiers et démarre les services systemd.
+# ═══════════════════════════════════════════════════════════════
+
+- name: "PHASE 1 – Configuration système commune"
+  hosts: cluster
+  roles:
+    - common
+    - java
+  tags: [common, java]
+
+- name: "PHASE 2 – Cockpit (administration web)"
+  hosts: cluster
+  roles:
+    - cockpit
+  tags: [cockpit, admin]
+
+- name: "PHASE 3 – ZooKeeper"
+  hosts: zookeeper
+  roles:
+    - zookeeper
+  tags: [zookeeper]
+
+- name: "PHASE 4 – Hadoop HDFS + YARN"
+  hosts: cluster
+  roles:
+    - hadoop
+  tags: [hadoop]
+
+- name: "PHASE 4b – HDFS Erasure Coding"
+  hosts: namenode
+  roles:
+    - hdfs_erasure_coding
+  tags: [hadoop, erasure-coding, ec]
+
+- name: "PHASE 5 – Apache Spark + Iceberg"
+  hosts: spark_master:spark_workers
+  roles:
+    - spark
+  tags: [spark]
+
+- name: "PHASE 6 – Apache Hive"
+  hosts: hive
+  roles:
+    - hive
+  tags: [hive]
+
+- name: "PHASE 7 – HBase + Phoenix"
+  hosts: hbase_master:hbase_regionservers:phoenix
+  roles:
+    - hbase
+  tags: [hbase]
+
+- name: "PHASE 7b – Phoenix QueryServer"
+  hosts: phoenix
+  roles:
+    - phoenix
+  tags: [phoenix]
+
+- name: "PHASE 8 – Kafka"
+  hosts: kafka
+  roles:
+    - kafka
+  tags: [kafka]
+
+- name: "PHASE 9 – NiFi"
+  hosts: nifi
+  roles:
+    - nifi
+  tags: [nifi]
+
+- name: "PHASE 10 – Atlas"
+  hosts: atlas
+  roles:
+    - atlas
+  tags: [atlas]
+
+- name: "PHASE 11 – Ranger"
+  hosts: ranger
+  roles:
+    - ranger
+  tags: [ranger, security]
+
+- name: "PHASE 12 – Monitoring"
+  hosts: monitoring
+  roles:
+    - monitoring
+  tags: [monitoring]
