@@ -1,0 +1,46 @@
+for container in bigtop_hostname0 bigtop_hostname1 bigtop_hostname2 bigtop_hostname3; do
+  echo "Installation des dépendances sur $container..."
+  docker exec -it $container bash -c "
+    dnf update -y
+    dnf install -y openssh-server openssh-clients openssh-keyutils
+    dnf install -y sudo which iproute net-tools vim wget curl tar unzip git
+    dnf install -y dnf-plugins-core
+    dnf config-manager --set-enabled powertools
+  "
+done
+
+
+for container in bigtop_hostname0 bigtop_hostname1 bigtop_hostname2 bigtop_hostname3; do
+  docker exec -it $container bash -c \
+    "setenforce 0 2>/dev/null; if [ -f /etc/selinux/config ]; then sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config; fi"
+done
+
+for container in bigtop_hostname0 bigtop_hostname1 bigtop_hostname2 bigtop_hostname3; do
+  docker exec -it $container bash -c \
+    "sed -i 's/^#enabled/enabled/' /etc/yum.repos.d/Rocky-Devel.repo 2>/dev/null"
+done
+
+for container in bigtop_hostname0 bigtop_hostname1 bigtop_hostname2 bigtop_hostname3; do
+  docker exec -it $container bash -c "
+    mkdir -p ~/.ssh
+    ssh-keygen -t rsa -N '' -f ~/.ssh/id_rsa 2>/dev/null
+    if systemctl list-unit-files | grep -q sshd.service; then
+        systemctl enable sshd 2>/dev/null
+        systemctl start sshd 2>/dev/null
+    fi
+  "
+done
+
+for i in 1 2 3; do
+  docker exec -it bigtop_hostname$i mkdir -p ~/.ssh
+done
+# Copier la clé
+cat id_rsa.pub | docker exec -i bigtop_hostname1 bash -c 'cat >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys'
+cat id_rsa.pub | docker exec -i bigtop_hostname2 bash -c 'cat >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys'
+cat id_rsa.pub | docker exec -i bigtop_hostname3 bash -c 'cat >> /root/.ssh/authorized_keys && chmod 600 /root/.ssh/authorized_keys'
+
+# Tester les connexions SSH
+ssh -o StrictHostKeyChecking=no bigtop_hostname1 echo "✓ Connexion bigtop_hostname1 OK"
+ssh -o StrictHostKeyChecking=no bigtop_hostname2 echo "✓ Connexion bigtop_hostname2 OK"
+ssh -o StrictHostKeyChecking=no bigtop_hostname3 echo "✓ Connexion bigtop_hostname3 OK"
+exit
