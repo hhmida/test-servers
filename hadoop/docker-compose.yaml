@@ -1,157 +1,146 @@
-
 version: '3.8'
 
 services:
   namenode:
-    image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: namenode
+    hostname: namenode
+    user: root
     restart: always
     ports:
-      - "9870:9870"
-      - "9000:9000"
+      - "9870:9870"   # NameNode Web UI
+      - "9000:9000"   # NameNode RPC
     volumes:
-      - hadoop_namenode:/hadoop/dfs/name
+      - hadoop_namenode:/opt/hadoop/dfs/name
+      - ./config:/opt/hadoop/etc/hadoop
     environment:
-      CLUSTER_NAME: test
-    env_file:
-      - ./hadoop.env
+      - ENSURE_NAMENODE_DIR=/opt/hadoop/dfs/name
+    command: ["hdfs", "namenode"]
     networks:
-      - hadoop-network
+      - hadoop
 
   datanode1:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: datanode1
+    hostname: datanode1
+    user: root
     restart: always
     volumes:
-      - hadoop_datanode1:/hadoop/dfs/data
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000"
-    env_file:
-      - ./hadoop.env
+      - hadoop_datanode1:/opt/hadoop/dfs/data
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["hdfs", "datanode"]
     depends_on:
       - namenode
     networks:
-      - hadoop-network
+      - hadoop
 
   datanode2:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: datanode2
+    hostname: datanode2
+    user: root
     restart: always
     volumes:
-      - hadoop_datanode2:/hadoop/dfs/data
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000"
-    env_file:
-      - ./hadoop.env
+      - hadoop_datanode2:/opt/hadoop/dfs/data
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["hdfs", "datanode"]
     depends_on:
       - namenode
     networks:
-      - hadoop-network
+      - hadoop
 
   datanode3:
-    image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: datanode3
+    hostname: datanode3
+    user: root
     restart: always
     volumes:
-      - hadoop_datanode3:/hadoop/dfs/data
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000"
-    env_file:
-      - ./hadoop.env
+      - hadoop_datanode3:/opt/hadoop/dfs/data
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["hdfs", "datanode"]
     depends_on:
       - namenode
     networks:
-      - hadoop-network
+      - hadoop
 
   resourcemanager:
-    image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: resourcemanager
+    hostname: resourcemanager
+    user: root
     restart: always
     ports:
-      - "8088:8088"
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 datanode2:9864 datanode3:9864"
-    env_file:
-      - ./hadoop.env
+      - "8088:8088"   # ResourceManager Web UI
+    volumes:
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["yarn", "resourcemanager"]
     depends_on:
       - namenode
       - datanode1
       - datanode2
       - datanode3
     networks:
-      - hadoop-network
+      - hadoop
 
   nodemanager1:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: nodemanager1
+    hostname: nodemanager1
+    user: root
     restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 datanode2:9864 datanode3:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
+    volumes:
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["yarn", "nodemanager"]
     depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
       - resourcemanager
     networks:
-      - hadoop-network
+      - hadoop
 
   nodemanager2:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: nodemanager2
+    hostname: nodemanager2
+    user: root
     restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 datanode2:9864 datanode3:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
+    volumes:
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["yarn", "nodemanager"]
     depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
       - resourcemanager
     networks:
-      - hadoop-network
+      - hadoop
 
   nodemanager3:
-    image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: nodemanager3
+    hostname: nodemanager3
+    user: root
     restart: always
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 datanode2:9864 datanode3:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
+    volumes:
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["yarn", "nodemanager"]
     depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
       - resourcemanager
     networks:
-      - hadoop-network
+      - hadoop
 
   historyserver:
-    image: bde2020/hadoop-historyserver:2.0.0-hadoop3.2.1-java8
+    image: apache/hadoop:3.4.2
     container_name: historyserver
+    hostname: historyserver
+    user: root
     restart: always
     ports:
-      - "8188:8188"
+      - "8188:8188"   # History Server Web UI
     volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
-    environment:
-      SERVICE_PRECONDITION: "namenode:9000 datanode1:9864 datanode2:9864 datanode3:9864 resourcemanager:8088"
-    env_file:
-      - ./hadoop.env
+      - hadoop_historyserver:/opt/hadoop/yarn/timeline
+      - ./config:/opt/hadoop/etc/hadoop
+    command: ["yarn", "timelineserver"]
     depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
       - resourcemanager
     networks:
-      - hadoop-network
+      - hadoop
 
 volumes:
   hadoop_namenode:
@@ -161,5 +150,5 @@ volumes:
   hadoop_historyserver:
 
 networks:
-  hadoop-network:
+  hadoop:
     driver: bridge
