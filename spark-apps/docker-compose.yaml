@@ -1,7 +1,7 @@
 services:
   # --- Apache Spark Cluster ---
   spark-master:
-    image: apache/spark:3.5.1
+    image: apache/spark:3.3.1
     container_name: spark-master
     hostname: spark-master
     command: >
@@ -16,7 +16,7 @@ services:
       - data-net
 
   spark-worker-1:
-    image: apache/spark:3.5.1
+    image: apache/spark:3.3.1
     container_name: spark-worker-1
     hostname: spark-worker-1
     depends_on:
@@ -33,7 +33,7 @@ services:
       - data-net
 
   spark-worker-2:
-    image: apache/spark:3.5.1
+    image: apache/spark:3.3.1
     container_name: spark-worker-2
     hostname: spark-worker-2
     depends_on:
@@ -50,7 +50,7 @@ services:
       - data-net
   # --- Spark History Server ---
   spark-history-server:
-    image: apache/spark:3.5.1
+    image: apache/spark:3.3.1
     container_name: spark-history-server
     hostname: spark-history-server
     depends_on:
@@ -68,7 +68,7 @@ services:
       - data-net
   # --- Apache Kafka (KRaft mode, no Zookeeper) ---
   kafka:
-    image: apache/kafka:latest
+    image: apache/kafka:4.3.1
     container_name: kafka
     hostname: kafka
     ports:
@@ -122,7 +122,7 @@ services:
 
   # --- MongoDB ---
   mongodb:
-    image: mongo:latest
+    image: mongo:9.0.8
     container_name: mongodb
     hostname: mongodb
     ports:
