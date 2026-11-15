@@ -6,17 +6,25 @@ services:
     user: root
     restart: always
     ports:
-      - "9870:9870"   # NameNode Web UI
-      - "9000:9000"   # NameNode RPC
+      - "9870:9870"
+      - "9000:9000"
     volumes:
       - hadoop_namenode:/opt/hadoop/dfs/name
       - ./config:/opt/hadoop/etc/hadoop
     environment:
-      - ENSURE_NAMENODE_DIR=/opt/hadoop/dfs/name
-    command: ["hdfs", "namenode"]
+      - CLUSTER_NAME=test
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        if [ ! -d /opt/hadoop/dfs/name/current ]; then
+          echo ">>> Formatting NameNode..."
+          hdfs namenode -format -force -nonInteractive
+        fi
+        echo ">>> Starting NameNode..."
+        hdfs namenode
     networks:
       - hadoop
-
+      
   datanode1:
     image: apache/hadoop:3.4.2
     container_name: datanode1
