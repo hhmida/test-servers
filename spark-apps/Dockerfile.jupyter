@@ -1,0 +1,18 @@
+FROM jupyter/pyspark-notebook:x86_64-spark-3.5.0
+
+USER root
+
+# Point clé : spécifier le canal conda-forge pour éviter l'échec de résolution de python=3.8
+RUN conda create -y -n py38 python=3.8 -c conda-forge && \
+    conda clean -afy
+
+ENV CONDA_DEFAULT_ENV=py38
+ENV PATH=/opt/conda/envs/py38/bin:$PATH
+
+RUN pip install --no-cache-dir pyspark==3.5.0
+
+RUN python --version && \
+    python -c "import pyspark; print('PySpark', pyspark.__version__)"
+
+USER ${NB_UID}
+WORKDIR /home/jovyan/work
