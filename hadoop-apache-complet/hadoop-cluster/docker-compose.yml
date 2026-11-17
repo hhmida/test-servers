@@ -28,6 +28,29 @@ services:
     networks:
       - hadoop
 
+  hdfs-init:
+    image: apache/hadoop:3.4.2
+    container_name: hdfs-init
+    user: root
+    volumes:
+      - ./config:/opt/hadoop/etc/hadoop
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        for attempt in {1..60}; do
+          if hdfs dfs -mkdir -p /user/root >/dev/null 2>&1; then
+            echo ">>> Created /user/root in HDFS."
+            exit 0
+          fi
+          sleep 2
+        done
+        echo ">>> Timed out waiting for HDFS to create /user/root." >&2
+        exit 1
+    depends_on:
+      - namenode
+    networks:
+      - hadoop
+
   datanode1:
     image: apache/hadoop:3.4.2
     container_name: datanode1
@@ -266,7 +289,10 @@ services:
 
   # ==================== TOOLS (Pig + Sqoop client) ====================
   tools:
-    image: apache/hadoop:3.4.2
+    image: hadoop-tools:3.4.2
+    build:
+      context: .
+      dockerfile: Dockerfile.tools
     container_name: tools
     hostname: tools
     user: root
@@ -277,8 +303,10 @@ services:
       - ./jars:/jars
     entrypoint: ["bash"]
     depends_on:
-      - namenode
-      - hiveserver2
+      hdfs-init:
+        condition: service_completed_successfully
+      hiveserver2:
+        condition: service_started
     networks:
       - hadoop
 

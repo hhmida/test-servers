@@ -1,0 +1,25 @@
+FROM apache/hadoop:3.4.2
+
+USER root
+
+ARG PIG_VERSION=0.17.0
+ARG SQOOP_VERSION=1.4.7
+
+# Sqoop needs its CLI parser ahead of Hadoop's newer Commons CLI dependency.
+ENV PIG_HOME=/opt/pig \
+    SQOOP_HOME=/opt/sqoop \
+    HADOOP_HOME=/opt/hadoop \
+    HADOOP_USER_CLASSPATH_FIRST=true \
+    PATH="/opt/pig/bin:/opt/sqoop/bin:${PATH}"
+
+RUN printf '#!/bin/sh\ncommand -v "$@"\n' > /usr/local/bin/which \
+    && chmod 0755 /usr/local/bin/which \
+    && mkdir -p "${PIG_HOME}" "${SQOOP_HOME}" \
+    && curl -fsSL "https://archive.apache.org/dist/pig/pig-${PIG_VERSION}/pig-${PIG_VERSION}.tar.gz" \
+       | tar -xz --strip-components=1 -C "${PIG_HOME}" \
+    && curl -fsSL "https://archive.apache.org/dist/sqoop/${SQOOP_VERSION}/sqoop-${SQOOP_VERSION}.bin__hadoop-2.6.0.tar.gz" \
+       | tar -xz --strip-components=1 -C "${SQOOP_HOME}" \
+    && curl -fsSL "https://repo.maven.apache.org/maven2/commons-cli/commons-cli/1.5.0/commons-cli-1.5.0.jar" \
+       -o "${SQOOP_HOME}/lib/commons-cli-1.5.0.jar"
+
+CMD ["bash"]

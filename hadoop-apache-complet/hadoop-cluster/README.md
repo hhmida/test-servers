@@ -65,6 +65,10 @@ hdfs dfs -cat /user/root/output/part-r-00000
 
 # Beeline (Hive)
 docker exec -it hiveserver2 beeline -u 'jdbc:hive2://localhost:10000'
+
+# Pig and Sqoop clients
+docker exec -it tools pig -version
+docker exec -it tools sqoop version
 ```
 
 ## Reset the cluster (destroy all data)
