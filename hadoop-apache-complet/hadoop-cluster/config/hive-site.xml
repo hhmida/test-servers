@@ -34,6 +34,10 @@
     <value>mr</value>
   </property>
   <property>
+    <name>hive.stats.autogather</name>
+    <value>false</value>
+  </property>
+  <property>
     <name>hive.metastore.schema.verification</name>
     <value>false</value>
   </property>

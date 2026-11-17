@@ -1,7 +1,23 @@
--- Create database and user for Hue
-CREATE DATABASE hue;
+-- La configuration Docker ne crée que l'utilisateur hive et la base metastore.
 CREATE USER hue WITH PASSWORD 'hue';
-GRANT ALL PRIVILEGES ON DATABASE hue TO hue;
+CREATE DATABASE hue OWNER hue;
 
--- Ensure hive user can use the metastore database (already created by POSTGRES_DB)
-GRANT ALL PRIVILEGES ON DATABASE metastore TO hive;
+-- Droits sur la base hue
+GRANT ALL PRIVILEGES ON DATABASE hue TO hue;
+ALTER DATABASE hue OWNER TO hue;
+
+-- Droits sur le schéma public (très important)
+\c hue
+GRANT ALL ON SCHEMA public TO hue;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hue;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hue;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hue;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hue;
+
+-- Idem pour la base metastore (Hive)
+\c metastore
+GRANT ALL ON SCHEMA public TO hive;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO hive;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO hive;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO hive;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO hive;

@@ -83,6 +83,8 @@ services:
       - "8088:8088"
     volumes:
       - ./config:/opt/hadoop/etc/hadoop
+      - ./jars/commons-collections-3.2.2.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections-3.2.2.jar
+      - ./jars/commons-collections4-4.4.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections4-4.4.jar
     command: ["yarn", "resourcemanager"]
     depends_on:
       - namenode
@@ -100,6 +102,8 @@ services:
     restart: always
     volumes:
       - ./config:/opt/hadoop/etc/hadoop
+      - ./jars/commons-collections-3.2.2.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections-3.2.2.jar
+      - ./jars/commons-collections4-4.4.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections4-4.4.jar
     command: ["yarn", "nodemanager"]
     depends_on:
       - resourcemanager
@@ -114,6 +118,8 @@ services:
     restart: always
     volumes:
       - ./config:/opt/hadoop/etc/hadoop
+      - ./jars/commons-collections-3.2.2.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections-3.2.2.jar
+      - ./jars/commons-collections4-4.4.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections4-4.4.jar
     command: ["yarn", "nodemanager"]
     depends_on:
       - resourcemanager
@@ -128,6 +134,8 @@ services:
     restart: always
     volumes:
       - ./config:/opt/hadoop/etc/hadoop
+      - ./jars/commons-collections-3.2.2.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections-3.2.2.jar
+      - ./jars/commons-collections4-4.4.jar:/opt/hadoop/share/hadoop/common/lib/commons-collections4-4.4.jar
     command: ["yarn", "nodemanager"]
     depends_on:
       - resourcemanager
@@ -191,7 +199,9 @@ services:
         -Djavax.jdo.option.ConnectionPassword=hive
     volumes:
       - ./config:/opt/hive/conf
-      - ./jars/postgresql.jar:/opt/hive/lib/postgres.jar
+      - ./jars/postgresql.jar:/opt/hive/lib/postgresql.jar
+      - ./jars/commons-collections-3.2.2.jar:/opt/hive/lib/commons-collections-3.2.2.jar
+      - ./jars/commons-collections4-4.4.jar:/opt/hive/lib/commons-collections4-4.4.jar
       - hive_warehouse:/opt/hive/data/warehouse
     depends_on:
       postgres:
@@ -216,7 +226,9 @@ services:
         -Dhive.metastore.uris=thrift://hive-metastore:9083
     volumes:
       - ./config:/opt/hive/conf
-      - ./jars/postgresql.jar:/opt/hive/lib/postgres.jar
+      - ./jars/postgresql.jar:/opt/hive/lib/postgresql.jar
+      - ./jars/commons-collections-3.2.2.jar:/opt/hive/lib/commons-collections-3.2.2.jar
+      - ./jars/commons-collections4-4.4.jar:/opt/hive/lib/commons-collections4-4.4.jar
       - hive_warehouse:/opt/hive/data/warehouse
     depends_on:
       - hive-metastore
@@ -242,6 +254,13 @@ services:
       - hiveserver2
       - namenode
       - resourcemanager
+    entrypoint: ["/bin/bash", "-c"]
+    command:
+      - |
+        echo "Waiting for Postgres..."
+        sleep 15
+        ./build/env/bin/hue migrate
+        ./build/env/bin/hue runserver 0.0.0.0:8888
     networks:
       - hadoop
 
